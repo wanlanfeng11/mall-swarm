@@ -86,14 +86,20 @@ public class UmsResourceServiceImpl implements UmsResourceService {
     @Override
     public Map<String,List<String>> initResourceRolesMap() {
         Map<String,List<String>> resourceRoleMap = new TreeMap<>();
+        //查询资源列表
         List<UmsResource> resourceList = resourceMapper.selectByExample(new UmsResourceExample());
+        //查询角色列表
         List<UmsRole> roleList = roleMapper.selectByExample(new UmsRoleExample());
+        //查询角色与资源的关系表
         List<UmsRoleResourceRelation> relationList = roleResourceRelationMapper.selectByExample(new UmsRoleResourceRelationExample());
+
+        //
         for (UmsResource resource : resourceList) {
             Set<Long> roleIds = relationList.stream().filter(item -> item.getResourceId().equals(resource.getId())).map(UmsRoleResourceRelation::getRoleId).collect(Collectors.toSet());
             List<String> roleNames = roleList.stream().filter(item -> roleIds.contains(item.getId())).map(item -> item.getId() + "_" + item.getName()).collect(Collectors.toList());
             resourceRoleMap.put("/"+applicationName+resource.getUrl(),roleNames);
         }
+
         redisService.del(AuthConstant.RESOURCE_ROLES_MAP_KEY);
         redisService.hSetAll(AuthConstant.RESOURCE_ROLES_MAP_KEY, resourceRoleMap);
         return resourceRoleMap;

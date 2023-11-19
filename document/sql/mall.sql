@@ -1,17 +1,19 @@
-/*
-Navicat MySQL Data Transfer
+--
+-- Navicat MySQL Data Transfer
 
-Source Server         : localhost
-Source Server Version : 50719
-Source Host           : localhost:3306
-Source Database       : mall
+-- Source Server         : localhost
+-- Source Server Version : 50719
+-- Source Host           : localhost:3306
+-- Source Database       : mall
 
-Target Server Type    : MYSQL
-Target Server Version : 50719
-File Encoding         : 65001
+-- Target Server Type    : MYSQL
+-- Target Server Version : 50719
+-- File Encoding         : 65001
 
-Date: 2020-08-24 13:48:26
-*/
+-- Date: 2020-08-24 13:48:26
+
+create database mall;
+use mall;
 
 SET FOREIGN_KEY_CHECKS=0;
 
