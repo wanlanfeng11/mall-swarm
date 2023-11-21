@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Swagger资源配置
- * Created by macro on 2020/7/9.
+ * springcloud-gateway整合knife4j相关配置，查看官网即可
+ * 该配置用于集成所有微服务文档
  */
 @Slf4j
 @Component

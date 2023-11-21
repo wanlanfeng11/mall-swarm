@@ -59,16 +59,20 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
         //不同用户体系登录不允许互相访问
         try {
             String token = request.getHeaders().getFirst(AuthConstant.JWT_TOKEN_HEADER);
+            //校验token是否为空
             if(StrUtil.isEmpty(token)){
                 return Mono.just(new AuthorizationDecision(false));
             }
+            //处理token
             String realToken = token.replace(AuthConstant.JWT_TOKEN_PREFIX, "");
             JWSObject jwsObject = JWSObject.parse(realToken);
             String userStr = jwsObject.getPayload().toString();
             UserDto userDto = JSONUtil.toBean(userStr, UserDto.class);
+            //判断是否是后台用户
             if (AuthConstant.ADMIN_CLIENT_ID.equals(userDto.getClientId()) && !pathMatcher.match(AuthConstant.ADMIN_URL_PATTERN, uri.getPath())) {
                 return Mono.just(new AuthorizationDecision(false));
             }
+            //判断是否是前台用户
             if (AuthConstant.PORTAL_CLIENT_ID.equals(userDto.getClientId()) && pathMatcher.match(AuthConstant.ADMIN_URL_PATTERN, uri.getPath())) {
                 return Mono.just(new AuthorizationDecision(false));
             }
@@ -93,11 +97,17 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
         authorities = authorities.stream().map(i -> i = AuthConstant.AUTHORITY_PREFIX + i).collect(Collectors.toList());
         //认证通过且角色匹配的用户可访问当前路径
         return mono
+                // 根据 Authentication 对象的 isAuthenticated字段来过滤掉未认证的请求
                 .filter(Authentication::isAuthenticated)
+                // 将 Authentication 对象中的权限转换成一个可迭代的集合
                 .flatMapIterable(Authentication::getAuthorities)
+                // 从每个权限对象中提取权限
                 .map(GrantedAuthority::getAuthority)
+                // 检查是否有任何一个权限包含在目标权限集合
                 .any(authorities::contains)
+                // 将前一步骤的结果映射为一个 AuthorizationDecision 对象
                 .map(AuthorizationDecision::new)
+                // 默认返回一个 AuthorizationDecision(false)，表示拒绝授权
                 .defaultIfEmpty(new AuthorizationDecision(false));
     }
 

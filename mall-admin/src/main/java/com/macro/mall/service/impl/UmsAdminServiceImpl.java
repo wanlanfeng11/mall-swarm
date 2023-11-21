@@ -92,6 +92,7 @@ public class UmsAdminServiceImpl implements UmsAdminService {
             Asserts.fail("用户名或密码不能为空！");
         }
         Map<String, String> params = new HashMap<>();
+        // 添加系统标识
         params.put("client_id", AuthConstant.ADMIN_CLIENT_ID);
         params.put("client_secret","123456");
         params.put("grant_type","password");

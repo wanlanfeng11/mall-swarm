@@ -12,7 +12,6 @@ import java.util.Optional;
 
 /**
  * 自定义Swagger的各个配置节点
- * Created by macro on 2020/7/9.
  */
 @RestController
 public class SwaggerHandler {
@@ -36,7 +35,8 @@ public class SwaggerHandler {
     @GetMapping("/swagger-resources/configuration/security")
     public Mono<ResponseEntity<SecurityConfiguration>> securityConfiguration() {
         return Mono.just(new ResponseEntity<>(
-                Optional.ofNullable(securityConfiguration).orElse(SecurityConfigurationBuilder.builder().build()), HttpStatus.OK));
+                Optional.ofNullable(securityConfiguration).orElse(SecurityConfigurationBuilder.builder().build())
+                        , HttpStatus.OK));
     }
 
     /**
@@ -49,7 +49,7 @@ public class SwaggerHandler {
     }
 
     /**
-     * Swagger资源配置，微服务中这各个服务的api-docs信息
+     * Swagger资源配置，微服务中各个服务的api-docs信息
      */
     @GetMapping("/swagger-resources")
     public Mono<ResponseEntity> swaggerResources() {

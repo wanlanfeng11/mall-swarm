@@ -8,9 +8,7 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.util.pattern.PathPatternParser;
 
 /**
- * 全局跨域配置
- * 注意：前端从网关进行调用时需要配置
- * Created by macro on 2019/7/27.
+ * 全局跨域配置：基于过滤器实现
  */
 @Configuration
 public class GlobalCorsConfig {
@@ -18,9 +16,13 @@ public class GlobalCorsConfig {
     @Bean
     public CorsWebFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
+        // 允许所有HTTP方法
         config.addAllowedMethod("*");
+        // 允许所有来源
         config.addAllowedOriginPattern("*");
+        // 允许所有请求头
         config.addAllowedHeader("*");
+        // 允许发送身份验证信息（例如Cookie）
         config.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource(new PathPatternParser());
         source.registerCorsConfiguration("/**", config);

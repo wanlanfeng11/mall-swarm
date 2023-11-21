@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
 import java.text.ParseException;
 
 /**
- * 将登录用户的JWT转化成用户信息的全局过滤器
+ * 配置全局过滤器：负责将登录用户的JWT转化成用户信息，从而下游服务无需进行jwt转换
  * Created by macro on 2020/6/17.
  */
 @Component

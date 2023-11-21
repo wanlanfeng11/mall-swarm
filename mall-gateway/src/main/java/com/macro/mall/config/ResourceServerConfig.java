@@ -37,26 +37,44 @@ public class ResourceServerConfig {
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        http.oauth2ResourceServer().jwt()
+        http
+                // 配置 OAuth 2.0 资源服务器
+                .oauth2ResourceServer()
+                // 使用 JWT 作为资源服务器的令牌解析和验证机制
+                .jwt()
+                // 自定义的 JWT 认证转换器：负责将 JWT 转换为 Spring Security 的 Authentication 对象
                 .jwtAuthenticationConverter(jwtAuthenticationConverter());
+
         //自定义处理JWT请求头过期或签名错误的结果
         http.oauth2ResourceServer().authenticationEntryPoint(restAuthenticationEntryPoint);
-        //对白名单路径，直接移除JWT请求头
+
+        //添加自定义filter在指定filter之前
         http.addFilterBefore(ignoreUrlsRemoveJwtFilter,SecurityWebFiltersOrder.AUTHENTICATION);
+
         http.authorizeExchange()
-                .pathMatchers(ArrayUtil.toArray(ignoreUrlsConfig.getUrls(),String.class)).permitAll()//白名单配置
-                .anyExchange().access(authorizationManager)//鉴权管理器配置
+                // 白名单配置，permitall表示立即放行，不会走以下配置的authorizationManager逻辑
+                .pathMatchers(ArrayUtil.toArray(ignoreUrlsConfig.getUrls(),String.class)).permitAll()
+                // 鉴权管理器配置
+                .anyExchange().access(authorizationManager)
+                // 配置异常处理
                 .and().exceptionHandling()
-                .accessDeniedHandler(restfulAccessDeniedHandler)//处理未授权
-                .authenticationEntryPoint(restAuthenticationEntryPoint)//处理未认证
-                .and().csrf().disable();
+                // 配置自定义未授权处理
+                .accessDeniedHandler(restfulAccessDeniedHandler)
+                // 配置自定义未认证处理
+                .authenticationEntryPoint(restAuthenticationEntryPoint)
+                .and()
+                // 禁用CSRF防护
+                .csrf().disable();
+
         return http.build();
     }
 
     @Bean
     public Converter<Jwt, ? extends Mono<? extends AbstractAuthenticationToken>> jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        // 设置权限前缀
         jwtGrantedAuthoritiesConverter.setAuthorityPrefix(AuthConstant.AUTHORITY_PREFIX);
+        // 设置用于存储权限信息的 JWT 权限名称
         jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName(AuthConstant.AUTHORITY_CLAIM_NAME);
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);

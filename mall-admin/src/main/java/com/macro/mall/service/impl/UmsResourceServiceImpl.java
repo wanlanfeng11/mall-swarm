@@ -8,7 +8,6 @@ import com.macro.mall.mapper.UmsResourceMapper;
 import com.macro.mall.mapper.UmsRoleMapper;
 import com.macro.mall.mapper.UmsRoleResourceRelationMapper;
 import com.macro.mall.model.*;
-import com.macro.mall.service.UmsAdminCacheService;
 import com.macro.mall.service.UmsResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

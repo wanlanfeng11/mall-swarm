@@ -31,10 +31,19 @@ public class BaseRedisConfig {
         RedisSerializer<Object> serializer = redisSerializer();
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
+
+        // 使用StringRedisSerializer来序列化和反序列化redis的key值
         redisTemplate.setKeySerializer(new StringRedisSerializer());
+
+        // 使用自定义Serializer来序列化和反序列化redis的value值
         redisTemplate.setValueSerializer(serializer);
+
+        // Hash的key也采用StringRedisSerializer的序列化方式
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+
+        // 使用自定义Serializer来序列化和反序列化redis的value值
         redisTemplate.setHashValueSerializer(serializer);
+
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }
