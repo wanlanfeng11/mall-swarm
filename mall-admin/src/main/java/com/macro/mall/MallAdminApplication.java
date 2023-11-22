@@ -16,6 +16,6 @@ public class MallAdminApplication {
     public static void main(String[] args) {
         SpringApplication.run(MallAdminApplication.class, args);
         // test1
-
+        // test2
     }
 }
