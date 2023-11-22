@@ -2,8 +2,8 @@ package com.macro.mall.auth.service.impl;
 
 import com.macro.mall.auth.domain.SecurityUser;
 import com.macro.mall.auth.constant.MessageConstant;
-import com.macro.mall.auth.service.UmsAdminService;
-import com.macro.mall.auth.service.UmsMemberService;
+import com.macro.mall.auth.feign.UmsAdminService;
+import com.macro.mall.auth.feign.UmsMemberService;
 import com.macro.mall.common.constant.AuthConstant;
 import com.macro.mall.common.domain.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +36,7 @@ public class UserServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         String clientId = request.getParameter("client_id");
         UserDto userDto;
+        //根据客户端类型获取用户数据
         if(AuthConstant.ADMIN_CLIENT_ID.equals(clientId)){
             userDto = adminService.loadUserByUsername(username);
         }else{

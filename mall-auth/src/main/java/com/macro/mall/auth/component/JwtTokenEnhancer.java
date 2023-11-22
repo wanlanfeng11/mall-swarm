@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * JWT内容增强器
+ * 实现TokenEnhancer，实现JWT内容增强器，该配置在token返回前执行
  * Created by macro on 2020/6/19.
  */
 @Component

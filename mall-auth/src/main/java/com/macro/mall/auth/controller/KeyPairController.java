@@ -13,7 +13,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.Map;
 
 /**
- * 获取RSA公钥接口
+ * RSA公钥接口：用于暴露公钥
  * Created by macro on 2020/6/19.
  */
 @RestController

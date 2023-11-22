@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 认证服务器配置
+ * 认证服务相关配置
  * Created by macro on 2020/6/19.
  */
 @AllArgsConstructor
@@ -38,19 +38,33 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.inMemory()
+        clients
+                // 在内存中存储客户端信息
+                .inMemory()
+                // 配置后台客户端
                 .withClient("admin-app")
+                // 客户端身份校验凭证：对123456进行 passwordEncoder.encode 加密
                 .secret(passwordEncoder.encode("123456"))
+                // 客户端的访问范围
                 .scopes("all")
+                // 授权类型:"password" 表示客户端可以使用用户名和密码直接获取令牌，"refresh_token" 表示客户端可以使用刷新令牌获取新的访问令牌
                 .authorizedGrantTypes("password", "refresh_token")
+                // 访问令牌的有效期：24h
                 .accessTokenValiditySeconds(3600*24)
+                // 刷新令牌的有效期：24h
                 .refreshTokenValiditySeconds(3600*24*7)
+
                 .and()
+                // 配置前台客户端
                 .withClient("portal-app")
+                // 客户端身份校验凭证：对123456进行 passwordEncoder.encode 加密
                 .secret(passwordEncoder.encode("123456"))
+                // 客户端的访问范围
                 .scopes("all")
                 .authorizedGrantTypes("password", "refresh_token")
+                // 访问令牌的有效期：24h
                 .accessTokenValiditySeconds(3600*24)
+                // 刷新令牌的有效期：24h
                 .refreshTokenValiditySeconds(3600*24*7);
     }
 
@@ -67,8 +81,11 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
                 .tokenEnhancer(enhancerChain);
     }
 
+
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
+
+        //允许客户端使用表单身份验证：即用户名和密码验证
         security.allowFormAuthenticationForClients();
     }
 
@@ -81,9 +98,11 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
 
     @Bean
     public KeyPair keyPair() {
-        //从classpath下的证书中获取秘钥对
+        //从classpath下的证书中获取秘钥对：参数1-密钥库的位置；参数2-打开密钥库的密码
         KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(new ClassPathResource("jwt.jks"), "123456".toCharArray());
-        return keyStoreKeyFactory.getKeyPair("jwt", "123456".toCharArray());
+        // 从密钥库中获取密钥对
+        KeyPair jwt = keyStoreKeyFactory.getKeyPair("jwt", "123456".toCharArray());
+        return jwt;
     }
 
 }

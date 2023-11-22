@@ -27,26 +27,54 @@ import java.util.stream.Collectors;
  */
 public abstract class BaseSwaggerConfig {
 
+    /**
+     * 自定义Swagger配置，子类需要重写
+     */
+    public abstract SwaggerProperties swaggerProperties();
+
+    /**
+     * 配置Swagger的文档生成器
+     * @return
+     */
     @Bean
     public Docket createRestApi() {
+        // 获取Swagger配置
         SwaggerProperties swaggerProperties = swaggerProperties();
+
         Docket docket = new Docket(DocumentationType.SWAGGER_2)
+
+                //调用apiInfo方法,创建一个ApiInfo实例,里面是展示在文档页面信息内容
                 .apiInfo(apiInfo(swaggerProperties))
+
+                //定义哪些API接口应该被包含在生成的文档中
                 .select()
+
+                //指定生成 API 文档时扫描的包路径
                 .apis(RequestHandlerSelectors.basePackage(swaggerProperties.getApiBasePackage()))
+
+                //PathSelectors.any()表示全部包含
                 .paths(PathSelectors.any())
                 .build();
+
         if (swaggerProperties.isEnableSecurity()) {
-            docket.securitySchemes(securitySchemes()).securityContexts(securityContexts());
+            docket
+                    .securitySchemes(securitySchemes())
+                    .securityContexts(securityContexts());
         }
         return docket;
     }
 
+
+    // api文档的详细信息
     private ApiInfo apiInfo(SwaggerProperties swaggerProperties) {
         return new ApiInfoBuilder()
+                //文档标题
                 .title(swaggerProperties.getTitle())
+                //文档描述
                 .description(swaggerProperties.getDescription())
+                //联系方式
                 .contact(new Contact(swaggerProperties.getContactName(), swaggerProperties.getContactUrl(), swaggerProperties.getContactEmail()))
+                //版本
                 .version(swaggerProperties.getVersion())
                 .build();
     }
@@ -114,9 +142,7 @@ public abstract class BaseSwaggerConfig {
         };
     }
 
-    /**
-     * 自定义Swagger配置
-     */
-    public abstract SwaggerProperties swaggerProperties();
+
 
 }
+
