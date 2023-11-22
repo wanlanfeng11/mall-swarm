@@ -91,14 +91,16 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
 
     @Bean
     public JwtAccessTokenConverter accessTokenConverter() {
+        // 创建JwtAccessTokenConverter，用于转换OAuth2访问令牌为JWT
         JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
+        // 设置KeyPair：KeyPair是用于签名和验证JWT的公钥/私钥对
         jwtAccessTokenConverter.setKeyPair(keyPair());
         return jwtAccessTokenConverter;
     }
 
     @Bean
     public KeyPair keyPair() {
-        //从classpath下的证书中获取秘钥对：参数1-密钥库的位置；参数2-打开密钥库的密码
+        // 创建 KeyStoreKeyFactory对象，用于从密钥库文件中加载KeyPair；"123456"是打开密钥库的密码
         KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(new ClassPathResource("jwt.jks"), "123456".toCharArray());
         // 从密钥库中获取密钥对
         KeyPair jwt = keyStoreKeyFactory.getKeyPair("jwt", "123456".toCharArray());
