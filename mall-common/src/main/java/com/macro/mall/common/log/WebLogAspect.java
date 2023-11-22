@@ -59,14 +59,18 @@ public class WebLogAspect {
         HttpServletRequest request = attributes.getRequest();
         //记录请求信息(通过Logstash传入Elasticsearch)
         WebLog webLog = new WebLog();
+        //执行被通知的方法
         Object result = joinPoint.proceed();
+        //获取被通知方法的签名
         Signature signature = joinPoint.getSignature();
         MethodSignature methodSignature = (MethodSignature) signature;
         Method method = methodSignature.getMethod();
+        // 检查方法是否有ApiOperation注解
         if (method.isAnnotationPresent(ApiOperation.class)) {
             ApiOperation log = method.getAnnotation(ApiOperation.class);
             webLog.setDescription(log.value());
         }
+
         long endTime = System.currentTimeMillis();
         String urlStr = request.getRequestURL().toString();
         webLog.setBasePath(StrUtil.removeSuffix(urlStr, URLUtil.url(urlStr).getPath()));
@@ -78,6 +82,7 @@ public class WebLogAspect {
         webLog.setStartTime(startTime);
         webLog.setUri(request.getRequestURI());
         webLog.setUrl(request.getRequestURL().toString());
+
         Map<String,Object> logMap = new HashMap<>();
         logMap.put("url",webLog.getUrl());
         logMap.put("method",webLog.getMethod());
